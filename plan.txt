@@ -15,7 +15,3 @@ TODO
 
 - create graph showing total equity over time
 
-- 
-
-
--
