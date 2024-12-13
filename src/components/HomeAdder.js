@@ -1,4 +1,4 @@
-"use client"
+
 import HomeListBuilder from "@/components/ui/homeListBuilder"
 import {
     Accordion,
