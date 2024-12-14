@@ -13,19 +13,30 @@ export const HomeListBuilder = ({ onCalculate }) => {
       monthOfPurchase: 0,
       homePrice: 280000,
       percentAnnualHomeAppreciation: 5,
-      percentDownPayment: 20,
-      percentAnnualInterestRate: 3.5,
+      percentDownPayment: 25,
+      percentAnnualInterestRate: 6.5,
       loanTermYears: 30,
-      refinanceCost: 3000,
+      refinanceCost: 7000,
     });
   
+    // const handleInputChange = (e) => {
+    //   const { name, value } = e.target;
+    //   setCurrentForm((prev) => ({
+    //     ...prev,
+    //     [name]: parseFloat(value),
+    //   }));
+    // };
+
     const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setCurrentForm((prev) => ({
-        ...prev,
-        [name]: parseFloat(value),
-      }));
-    };
+        const { name, value } = e.target;
+        // Remove commas and convert to number
+        const rawValue = value.replace(/,/g, '');
+        
+        setCurrentForm((prev) => ({
+          ...prev,
+          [name]: parseFloat(rawValue) || '',  // Use empty string if parsing fails
+        }));
+      };
   
     const addHome = () => {
       const newHome = {
@@ -74,12 +85,25 @@ export const HomeListBuilder = ({ onCalculate }) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium">Home Price ($)</label>
-              <Input
+              {/* <Input
                 type="number"
                 name="homePrice"
                 value={currentForm.homePrice}
                 onChange={handleInputChange}
                 className="mt-1"
+              /> */}
+              <Input
+                type="text"
+                name="homePrice"  // Make sure to add the name prop
+                value={currentForm.homePrice ? Number(currentForm.homePrice).toLocaleString() : ''}
+                onChange={handleInputChange}
+                placeholder="Enter home price"
+                className="mt-1"
+                onKeyPress={(e) => {
+                    if (!/[\d.]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
+                    e.preventDefault();
+                    }
+                }}
               />
             </div>
   
@@ -134,12 +158,25 @@ export const HomeListBuilder = ({ onCalculate }) => {
   
             <div>
               <label className="text-sm font-medium">Refinance Cost ($)</label>
-              <Input
+              {/* <Input
                 type="number"
                 name="refinanceCost"
                 value={currentForm.refinanceCost}
                 onChange={handleInputChange}
                 className="mt-1"
+              /> */}
+              <Input
+                type="text"
+                name="refinanceCost"  // Make sure to add the name prop
+                value={currentForm.refinanceCost ? Number(currentForm.refinanceCost).toLocaleString() : ''}
+                onChange={handleInputChange}
+                placeholder="Enter refinance cost"
+                className="mt-1"
+                onKeyPress={(e) => {
+                    if (!/[\d.]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
+                    e.preventDefault();
+                    }
+                }}
               />
             </div>
   
