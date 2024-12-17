@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Trash2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import House from '@/lib/House'
 
 export const HomeListBuilder = ({ onCalculate }) => {
     const [projectionYears, setProjectionYears] = useState(30);
@@ -18,14 +19,6 @@ export const HomeListBuilder = ({ onCalculate }) => {
       loanTermYears: 30,
       refinanceCost: 7000,
     });
-  
-    // const handleInputChange = (e) => {
-    //   const { name, value } = e.target;
-    //   setCurrentForm((prev) => ({
-    //     ...prev,
-    //     [name]: parseFloat(value),
-    //   }));
-    // };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -39,11 +32,21 @@ export const HomeListBuilder = ({ onCalculate }) => {
       };
   
     const addHome = () => {
-      const newHome = {
-        ...currentForm,
-        id: Date.now(),
-        index: homes.length,
-      };
+      // const newHome = {
+      //   ...currentForm,
+      //   id: Date.now(),
+      //   index: homes.length,
+      // };
+      const newHome = new House(
+        currentForm.monthOfPurchase, 
+        currentForm.homePrice,
+        currentForm.percentAnnualHomeAppreciation,
+        currentForm.percentDownPayment,
+        currentForm.percentAnnualInterestRate,
+        currentForm.loanTermYears,
+        currentForm.refinanceCost,
+        Date.now()
+      );
       setHomes([...homes, newHome]);
     };
   
@@ -55,7 +58,6 @@ export const HomeListBuilder = ({ onCalculate }) => {
       onCalculate({ homes, projectionYears });
     };
   
-    // Return your existing JSX
     return (
       <Card className="w-full max-w-2xl">
         <CardHeader>
@@ -85,16 +87,9 @@ export const HomeListBuilder = ({ onCalculate }) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium">Home Price ($)</label>
-              {/* <Input
-                type="number"
-                name="homePrice"
-                value={currentForm.homePrice}
-                onChange={handleInputChange}
-                className="mt-1"
-              /> */}
               <Input
                 type="text"
-                name="homePrice"  // Make sure to add the name prop
+                name="homePrice" 
                 value={currentForm.homePrice ? Number(currentForm.homePrice).toLocaleString() : ''}
                 onChange={handleInputChange}
                 placeholder="Enter home price"
@@ -158,16 +153,9 @@ export const HomeListBuilder = ({ onCalculate }) => {
   
             <div>
               <label className="text-sm font-medium">Refinance Cost ($)</label>
-              {/* <Input
-                type="number"
-                name="refinanceCost"
-                value={currentForm.refinanceCost}
-                onChange={handleInputChange}
-                className="mt-1"
-              /> */}
               <Input
                 type="text"
-                name="refinanceCost"  // Make sure to add the name prop
+                name="refinanceCost"
                 value={currentForm.refinanceCost ? Number(currentForm.refinanceCost).toLocaleString() : ''}
                 onChange={handleInputChange}
                 placeholder="Enter refinance cost"
@@ -210,7 +198,7 @@ export const HomeListBuilder = ({ onCalculate }) => {
                     <div className="space-y-1">
                       <div>
                         <span className="font-medium">
-                          ${home.homePrice.toLocaleString()}
+                          ${home.initialHomePrice.toLocaleString()}
                         </span>
                         <span className="text-gray-600 ml-2">
                           {home.monthOfPurchase} months from now

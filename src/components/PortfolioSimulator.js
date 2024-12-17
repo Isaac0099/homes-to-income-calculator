@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { HomeListBuilder } from "@/components/ui/homeListBuilder";
+import { runSimulation } from "@/lib/Simulation";
 
 // Results component to show simulation
 const SimulationResults = ({ homes, projectionYears, onReset }) => {
@@ -29,7 +30,7 @@ const PortfolioSimulator = () => {
 
   const handleCalculate = (data) => {
     setSimulationData(data);
-    console.log(data);
+    const result = runSimulation(data.homes, data.projectionYears);
   };
 
   const handleReset = () => {

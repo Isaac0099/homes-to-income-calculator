@@ -9,9 +9,8 @@ class House {
     percentAnnualInterestRate,
     loanTermYears,
     refinanceCost,
-    index
+    id
   ) {
-    this.index = index;
     this.monthOfPurchase = monthOfPurchase;
     this.monthOfLatestMortgageOrRefinance = monthOfPurchase;
     this.initialHomePrice = homePrice;
@@ -20,8 +19,7 @@ class House {
     this.percentDownPayment = percentDownPayment;
     this.percentAnnualInterestRate = percentAnnualInterestRate;
     this.loanTermYears = loanTermYears;
-    this.loanAmount =
-      (this.currentHomePrice * (100 - percentDownPayment)) / 100;
+    this.loanAmount = (this.currentHomePrice * (100 - percentDownPayment)) / 100;
     this.amoCalc = new AmortizationCalculator();
     this.schedule = this.amoCalc.generateAmortizationSchedule(
       this.loanAmount,
@@ -30,29 +28,23 @@ class House {
     );
     this.refinanceCost = refinanceCost;
     this.refinanceSchedule = [];
+    this.id = id;
   }
 
   getCurrentHomeValue(currentMonth) {
-    const monthsSinceMortgageOrRefinance =
-      currentMonth - this.monthOfLatestMortgageOrRefinance;
+    const monthsSinceMortgageOrRefinance = currentMonth - this.monthOfPurchase;
     return (
       this.initialHomePrice *
-      Math.pow(
-        1 + this.percentAnnualHomeAppreciation / 100,
-        monthsSinceMortgageOrRefinance / 12
-      )
+      Math.pow(1 + this.percentAnnualHomeAppreciation / 100, monthsSinceMortgageOrRefinance / 12)
     );
   }
 
   getCurrentEquity(currentMonth) {
-    const monthsIntoAmoSchedule =
-      currentMonth - this.monthOfLatestMortgageOrRefinance;
+    const monthsIntoAmoSchedule = currentMonth - this.monthOfLatestMortgageOrRefinance;
     const homeValue = this.getCurrentHomeValue(currentMonth);
-    const remainingBalance =
-      this.schedule[monthsIntoAmoSchedule].remainingBalance;
+    const remainingBalance = this.schedule[monthsIntoAmoSchedule].remainingBalance;
     const percentOwnershipOfHome =
-      this.percentDownPayment +
-      ((this.loanAmount - remainingBalance) / this.loanAmount) * 100;
+      this.percentDownPayment + ((this.loanAmount - remainingBalance) / this.loanAmount) * 100;
     const currentEquity = percentOwnershipOfHome * homeValue;
     return currentEquity;
   }
@@ -65,18 +57,12 @@ class House {
    **/
   getPossibleRefinancePayout(currentMonth) {
     if (currentMonth == this.monthOfLatestMortgageOrRefinance) {
-      throw new Error(
-        "can't get possible refinance details for the month you do a refinance"
-      );
+      throw new Error("can't get possible refinance details for the month you do a refinance");
     }
-    const monthsSinceMortgageOrRefinance =
-      currentMonth - this.monthOfLatestMortgageOrRefinance;
+    const monthsSinceMortgageOrRefinance = currentMonth - this.monthOfLatestMortgageOrRefinance;
     const currentHomeValue =
       this.initialHomePrice *
-      Math.pow(
-        1 + this.percentAnnualHomeAppreciation / 100,
-        monthsSinceMortgageOrRefinance / 12
-      );
+      Math.pow(1 + this.percentAnnualHomeAppreciation / 100, monthsSinceMortgageOrRefinance / 12);
     const grossPayout = currentHomeValue * 0.75 - this.refinanceCost;
     const remainingPrincipleOnMortgage =
       this.schedule[monthsSinceMortgageOrRefinance].remainingBalance;
@@ -85,33 +71,21 @@ class House {
     return payout;
   }
 
-  doARefinance(
-    currentMonth,
-    newInterestRate,
-    newPercentDownPayment,
-    newLoanTermYears
-  ) {
+  doARefinance(currentMonth, newInterestRate, newPercentDownPayment, newLoanTermYears) {
     if (newPercentDownPayment < 25) {
-      throw new Error(
-        "Down payment for refinance cannot be lower than 25 percent."
-      );
+      throw new Error("Down payment for refinance cannot be lower than 25 percent.");
     }
 
-    const monthsSinceMortgageOrRefinance =
-      currentMonth - this.monthOfLatestMortgageOrRefinance;
+    const monthsSinceMortgageOrRefinance = currentMonth - this.monthOfLatestMortgageOrRefinance;
 
     // Payout information
     const currentHomeValue =
       this.initialHomePrice *
-      Math.pow(
-        1 + this.percentAnnualHomeAppreciation / 100,
-        monthsSinceMortgageOrRefinance / 12
-      );
+      Math.pow(1 + this.percentAnnualHomeAppreciation / 100, monthsSinceMortgageOrRefinance / 12);
     const grossPayout = currentHomeValue * 0.75 - this.refinanceCost;
     const remainingPrincipleOnMortgage =
       this.schedule[monthsSinceMortgageOrRefinance].remainingBalance;
-    const payoutAfterPayingOffCurrentMortgage =
-      grossPayout - remainingPrincipleOnMortgage;
+    const payoutAfterPayingOffCurrentMortgage = grossPayout - remainingPrincipleOnMortgage;
 
     // New loan info (updating class fields)
     this.monthOfLatestMortgageOrRefinance = currentMonth;

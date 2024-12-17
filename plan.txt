@@ -1,8 +1,8 @@
 TODO
 
-- fix inputs so that they don't suck
+- (done) fix inputs so that they don't suck
 
-- show suggested home price for when the user is trying to add a home due to inflation
+- (skipping for now) show suggested home price for when the user is trying to add a home due to inflation
 
 - figure out how to pass infomation from one component to another one
 
