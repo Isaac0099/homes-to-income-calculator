@@ -14,12 +14,11 @@ class House {
     this.monthOfPurchase = monthOfPurchase;
     this.monthOfLatestMortgageOrRefinance = monthOfPurchase;
     this.initialHomePrice = homePrice;
-    this.currentHomePrice = this.initialHomePrice;
     this.percentAnnualHomeAppreciation = percentAnnualHomeAppreciation;
     this.percentDownPayment = percentDownPayment;
     this.percentAnnualInterestRate = percentAnnualInterestRate;
     this.loanTermYears = loanTermYears;
-    this.loanAmount = (this.currentHomePrice * (100 - percentDownPayment)) / 100;
+    this.loanAmount = (homePrice * (100 - percentDownPayment)) / 100;
     this.amoCalc = new AmortizationCalculator();
     this.schedule = this.amoCalc.generateAmortizationSchedule(
       this.loanAmount,
