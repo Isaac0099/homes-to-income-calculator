@@ -23,7 +23,6 @@ export const runSimulation = (startingHomes, projectionsYears) => {
   /// constant values:
   const percentDown = startingHomes[0].percentDownPayment;
   const percentAnnualHomeAppreciation = startingHomes[0].percentAnnualHomeAppreciation;
-  const fractionOfHomePriceToGetIn = (percentDown + 7) / 100;
   const percentAnnualInterestRate = startingHomes[0].percentAnnualInterestRate;
   const loanTermYears = 30;
 
@@ -42,20 +41,20 @@ export const runSimulation = (startingHomes, projectionsYears) => {
     //// check for possibility of buying a new home via a refinance
     //// cost of buying a new home is: currentHomeValue * (downPaymentPercenct + 7%)
     if (homes.length !== 0) {
-      const currentHomeValue = homes[0].getCurrentHomeValue(month);
-      const costToGetIntoNewHome = currentHomeValue * fractionOfHomePriceToGetIn;
       for (let home of homes) {
+        const fractionOfHomePriceToGetIn = (home.percentDownPayment + 7) / 100;
+        const costToGetIntoNewHome = home.getCurrentHomeValue(month) * fractionOfHomePriceToGetIn;
         if (home.getPossibleRefinancePayout(month) > costToGetIntoNewHome) {
-          home.doARefinance(month, percentAnnualInterestRate, percentDown, loanTermYears);
+          home.doARefinance(month, home.percentAnnualInterestRate, 25, home.loanTermYears);
           newHomesAddedThisMonth.push(
             new House(
               month,
-              currentHomeValue,
-              percentAnnualHomeAppreciation,
-              percentDown,
-              percentAnnualInterestRate,
-              30,
-              homes[0].refinanceCost,
+              home.getCurrentHomeValue(month),
+              home.percentAnnualHomeAppreciation,
+              home.percentDown,
+              home.percentAnnualInterestRate,
+              home.loanTermYears,
+              home.refinanceCost,
               Date.now()
             )
           );
