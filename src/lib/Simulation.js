@@ -25,9 +25,9 @@ export const runSimulation = (startingHomes, projectionsYears) => {
   const percentAnnualHomeAppreciation = startingHomes[0].percentAnnualHomeAppreciation;
   const fractionOfHomePriceToGetIn = (percentDown + 7) / 100;
   const percentAnnualInterestRate = startingHomes[0].percentAnnualInterestRate;
+  const loanTermYears = 30;
 
   const homes = []; // our list of all homes purchased either from user input or growth
-  console.log(startingHomes);
 
   for (let month = 0; month <= projectionsYears * 12; month++) {
     // add any input homes to simulation homes if it is the correct month
@@ -40,13 +40,18 @@ export const runSimulation = (startingHomes, projectionsYears) => {
     startingHomes = startingHomes.filter((home) => home.monthOfPurchase !== month);
 
     //// check for possibility of buying a new home via a refinance
-    // cost of buying a new home is: currentHomeValue * (downPaymentPercenct + 7%)
+    //// cost of buying a new home is: currentHomeValue * (downPaymentPercenct + 7%)
     if (homes.length !== 0) {
       const currentHomeValue = homes[0].getCurrentHomeValue(month);
       const costToGetIntoNewHome = currentHomeValue * fractionOfHomePriceToGetIn;
       for (let home of homes) {
+        // console.log(
+        //   `month: ${month} getRefi: ${home.getPossibleRefinancePayout(
+        //     month
+        //   )} cost: ${costToGetIntoNewHome}`
+        // );
         if (home.getPossibleRefinancePayout(month) > costToGetIntoNewHome) {
-          home.doARefinance(month);
+          home.doARefinance(month, percentAnnualInterestRate, percentDown, loanTermYears);
           newHomesAddedThisMonth.push(
             new House(
               month,
@@ -62,9 +67,6 @@ export const runSimulation = (startingHomes, projectionsYears) => {
         }
       }
     }
-
-    /////
-
     homes.push(...newHomesAddedThisMonth);
   }
 
