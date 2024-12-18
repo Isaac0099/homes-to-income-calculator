@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import House from '@/lib/House'
 
 export const HomeListBuilder = ({ onCalculate }) => {
-    const [projectionYears, setProjectionYears] = useState(30);
+    const [projectionYears, setProjectionYears] = useState(15);
     const [baseHomePrice, setBaseHomePrice] = useState(280000);
     const [percentAnnualHomeAppreciation, setPercentAnnualHomeAppreciation] = useState(5);
     const [homes, setHomes] = useState([]);
@@ -281,7 +281,7 @@ export const HomeListBuilder = ({ onCalculate }) => {
                     <Button
                         onClick={handleCalculate}
                         disabled={homes.length === 0}
-                        className="w-32"
+                        className="w-32 bg-[#f17422ff] disabled:bg-gray100"
                     >
                         Calculate
                     </Button>

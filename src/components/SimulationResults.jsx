@@ -4,21 +4,23 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DollarSign, Home, TrendingUp, Wallet } from 'lucide-react';
 
-export const SimulationResults = ({ homes, projectionYears, onReset }) => {
-  // Sample data structure (replace with your actual simulation results)
-  const portfolioGrowth = Array.from({ length: projectionYears + 1 }, (_, year) => ({
-    year,
-    totalEquity: 500000 * Math.pow(1.12, year),
-    totalProperties: Math.min(Math.floor(year / 2) + homes.length, 15),
-    netWorth: 600000 * Math.pow(1.15, year),
-  }));
+// Currrency formatter
+const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+export const SimulationResults = ({ homes, projectionYears, results, onReset }) => {
 
   const KeyMetricCard = ({ icon: Icon, title, value, subtext }) => (
     <Card>
       <CardContent className="p-6">
         <div className="flex items-center space-x-4">
-          <div className="p-2 bg-blue-100 rounded-full">
-            <Icon className="h-6 w-6 text-blue-600" />
+          <div className="p-2 bg-gray-100 rounded-full">
+            <Icon className="h-6 w-6 text-orange-600" />
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">{title}</p>
@@ -42,26 +44,26 @@ export const SimulationResults = ({ homes, projectionYears, onReset }) => {
             <KeyMetricCard
               icon={Home}
               title="Total Properties"
-              value={portfolioGrowth[projectionYears].totalProperties}
+              value={results.homes.length}
               subtext={`Starting with ${homes.length} properties`}
             />
             <KeyMetricCard
               icon={DollarSign}
               title="Total Portfolio Value"
-              value={`$${Math.round(portfolioGrowth[projectionYears].netWorth / 1000000)}M`}
-              subtext="Projected in 30 years"
+              value={`$${Math.round(results.graphingData[projectionYears].portfolioValue / 1000000)}M`}
+              subtext={`Projected in ${projectionYears} years`}
             />
             <KeyMetricCard
               icon={TrendingUp}
               title="Annual ROI"
-              value="15.2%"
-              subtext="Average return on investment"
+              value={`${results.annualPercentReturnFromEquity.toFixed(1)}%`}
+              subtext={`Average return on investment \n (based on equity after ${projectionYears} years)`}
             />
             <KeyMetricCard
               icon={Wallet}
-              title="Monthly Cash Flow"
-              value="$12,450"
-              subtext="Projected passive income"
+              title="Total Out of Pocket"
+              value={formatCurrency(results.totalOutOfPocket)}
+              subtext="Money you spent buying homes"
             />
           </div>
 
@@ -69,13 +71,13 @@ export const SimulationResults = ({ homes, projectionYears, onReset }) => {
           <Tabs defaultValue="portfolio" className="w-full">
             <TabsList>
               <TabsTrigger value="portfolio">Portfolio Growth</TabsTrigger>
-              <TabsTrigger value="properties">Properties Over Time</TabsTrigger>
-              <TabsTrigger value="cashflow">Cash Flow Analysis</TabsTrigger>
+              <TabsTrigger value="properties">Properties Count Over Time</TabsTrigger>
+              <TabsTrigger value="cashflow">Equity Over Time</TabsTrigger>
             </TabsList>
 
             <TabsContent value="portfolio" className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={portfolioGrowth}>
+                <LineChart data={results.graphingData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="year" />
                   <YAxis tickFormatter={(value) => `$${value/1000000}M`} />
@@ -85,7 +87,7 @@ export const SimulationResults = ({ homes, projectionYears, onReset }) => {
                   />
                   <Line 
                     type="monotone" 
-                    dataKey="netWorth" 
+                    dataKey="portfolioValue" 
                     stroke="#2563eb" 
                     strokeWidth={2}
                     dot={false}
@@ -96,7 +98,7 @@ export const SimulationResults = ({ homes, projectionYears, onReset }) => {
 
             <TabsContent value="properties" className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={portfolioGrowth}>
+                <LineChart data={results.graphingData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="year" />
                   <YAxis />
@@ -106,7 +108,7 @@ export const SimulationResults = ({ homes, projectionYears, onReset }) => {
                   />
                   <Line 
                     type="stepAfter" 
-                    dataKey="totalProperties" 
+                    dataKey="propertyCount" 
                     stroke="#16a34a" 
                     strokeWidth={2}
                   />
@@ -116,7 +118,7 @@ export const SimulationResults = ({ homes, projectionYears, onReset }) => {
 
             <TabsContent value="cashflow" className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={portfolioGrowth}>
+                <LineChart data={results.graphingData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="year" />
                   <YAxis tickFormatter={(value) => `$${value/1000}k`} />
@@ -126,7 +128,7 @@ export const SimulationResults = ({ homes, projectionYears, onReset }) => {
                   />
                   <Line 
                     type="monotone" 
-                    dataKey="totalEquity" 
+                    dataKey="equity" 
                     stroke="#dc2626" 
                     strokeWidth={2}
                     dot={false}
@@ -141,7 +143,7 @@ export const SimulationResults = ({ homes, projectionYears, onReset }) => {
       <div className="flex justify-end">
         <button
           onClick={onReset}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-[#f17422ff] text-white rounded-md hover:bg-[#f4a46f] transition-colors"
         >
           Create New Simulation
         </button>

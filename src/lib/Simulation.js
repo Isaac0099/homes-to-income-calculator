@@ -13,22 +13,24 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-export const runSimulation = (startingHomes, projectionsYears) => {
+export const runSimulation = (startingHomes, projectionYears) => {
   if (startingHomes.length === 0) {
     const result = null;
     return result;
   }
-  const result = {};
+
+  // find the total out of pocket costs from these starting homes
+  let totalOutOfPocket = 0;
+  startingHomes.forEach((home) => {
+    totalOutOfPocket += (home.initialHomePrice * (home.percentDownPayment + 7)) / 100;
+  });
 
   const homes = []; // our list of all homes purchased either from user input or growth
 
-  // Arrays with yearly value for making graphs and showing results.
-  const totalEquity = [];
-  const totalProperties = [];
-  const totalPortfolioValue = [];
-  const totalDebt = [];
+  // Array with yearly values for making graphs and showing results.
+  let graphingData = [];
 
-  for (let month = 0; month <= projectionsYears * 12; month++) {
+  for (let month = 0; month <= projectionYears * 12; month++) {
     // add any input homes to simulation homes if it is the correct month to do so
     let newHomesAddedThisMonth = [];
     for (let home of startingHomes) {
@@ -41,7 +43,7 @@ export const runSimulation = (startingHomes, projectionsYears) => {
     //// check for possibility of buying a new home via a refinance
     //// cost of buying a new home is: currentHomeValue * (downPayment% + 7%)
     if (homes.length !== 0) {
-      if (projectionsYears * 12 - month > 24) {
+      if (projectionYears * 12 - month > 24) {
         // we stop doing refinances for the last two years of the growth period to build equity.
         for (let home of homes) {
           const fractionOfHomePriceToGetIn = (home.percentDownPayment + 7) / 100;
@@ -66,34 +68,39 @@ export const runSimulation = (startingHomes, projectionsYears) => {
     }
     homes.push(...newHomesAddedThisMonth);
 
-    // for every year, add results to graphing arrays
+    // for every year, add results to graphing array
     if (month % 12 === 0) {
       const propertyCountEntry = homes.length;
-      const portfolioValueEntry = 0;
-      const debtEntry = 0;
-      const equityEntry = 0;
+      let portfolioValueEntry = 0;
+      let debtEntry = 0;
+      let equityEntry = 0;
 
       for (let home of homes) {
         const homeValue = home.getCurrentHomeValue(month);
-        const homeDebt = home.schedule[month - home.monthOfLatestMortgageOrRefinance];
+        const homeDebt = home.schedule[month - home.monthOfLatestMortgageOrRefinance].remainingBalance;
         portfolioValueEntry += homeValue;
         debtEntry += homeDebt;
         equityEntry += homeValue - homeDebt;
       }
 
-      totalProperties.push(propertyCountEntry);
-      totalPortfolioValue.push(portfolioValueEntry);
-      totalDebt.push(debtEntry);
-      totalEquity.push(equityEntry);
+      const dataPoint = {
+        year: month / 12,
+        propertyCount: propertyCountEntry,
+        portfolioValue: portfolioValueEntry,
+        debt: debtEntry,
+        equity: equityEntry,
+      };
+      graphingData.push(dataPoint);
     }
   }
 
-  result = {
+  const annualPercentReturnFromEquity = (Math.pow(graphingData[projectionYears].equity / totalOutOfPocket, 1 / projectionYears) - 1) * 100;
+
+  const results = {
     homes: homes,
-    totalProperties: totalProperties,
-    totalPortfolioValue: totalPortfolioValue,
-    totalDebt: totalDebt,
-    toalEquity: totalEquity,
+    graphingData: graphingData,
+    totalOutOfPocket: totalOutOfPocket,
+    annualPercentReturnFromEquity: annualPercentReturnFromEquity,
   };
 
   return results;

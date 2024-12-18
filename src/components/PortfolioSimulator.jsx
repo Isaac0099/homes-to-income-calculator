@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { HomeListBuilder } from "@/components/homeListBuilder";
 import { SimulationResults } from "@/components/SimulationResults";
 import { runSimulation } from "@/lib/Simulation";
@@ -10,8 +9,9 @@ const PortfolioSimulator = () => {
   const [simulationData, setSimulationData] = useState(null);
 
   const handleCalculate = (data) => {
-    const result = runSimulation(data.homes, data.projectionYears);
-    setSimulationData({...data, results: result})
+    const results = runSimulation(data.homes, data.projectionYears);
+    console.log(results);
+    setSimulationData({...data, results: results})
   };
 
   const handleReset = () => {
@@ -26,6 +26,7 @@ const PortfolioSimulator = () => {
         <SimulationResults
           homes={simulationData.homes}
           projectionYears={simulationData.projectionYears}
+          results={simulationData.results}
           onReset={handleReset}
         />
       )}
