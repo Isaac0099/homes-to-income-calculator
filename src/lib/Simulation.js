@@ -15,7 +15,7 @@ const formatCurrency = (amount) => {
 
 export const runSimulation = (startingHomes, projectionsYears) => {
   if (startingHomes.length === 0) {
-    const result = [];
+    const result = null;
     return result;
   }
 
@@ -45,11 +45,6 @@ export const runSimulation = (startingHomes, projectionsYears) => {
       const currentHomeValue = homes[0].getCurrentHomeValue(month);
       const costToGetIntoNewHome = currentHomeValue * fractionOfHomePriceToGetIn;
       for (let home of homes) {
-        // console.log(
-        //   `month: ${month} getRefi: ${home.getPossibleRefinancePayout(
-        //     month
-        //   )} cost: ${costToGetIntoNewHome}`
-        // );
         if (home.getPossibleRefinancePayout(month) > costToGetIntoNewHome) {
           home.doARefinance(month, percentAnnualInterestRate, percentDown, loanTermYears);
           newHomesAddedThisMonth.push(
@@ -70,7 +65,12 @@ export const runSimulation = (startingHomes, projectionsYears) => {
     homes.push(...newHomesAddedThisMonth);
   }
 
-  console.log(`result homes: ${homes.length}`);
+  const projectionMonth = projectionsYears * 12;
+
+  console.log(`result home count: ${homes.length}`);
+  for (let i = 0; i < homes.length; i++) {
+    console.log(`potential payout: ${formatCurrency(homes[i].getPossibleRefinancePayout(projectionMonth))}`);
+  }
   return homes;
 };
 
