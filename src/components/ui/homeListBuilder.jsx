@@ -39,6 +39,12 @@ export const HomeListBuilder = ({ onCalculate }) => {
     const currentAppreciatedPrice = useMemo(() => {
         return calculateAppreciatedPrice(currentForm.monthOfPurchase);
     }, [currentForm.monthOfPurchase, baseHomePrice, percentAnnualHomeAppreciation]);
+
+    const totalOutOfPocket = useMemo(() => {
+        const downPaymentAmount = currentAppreciatedPrice * (currentForm.percentDownPayment / 100);
+        const closingCosts = currentAppreciatedPrice * 0.07; // 7% for closing costs
+        return downPaymentAmount + closingCosts;
+    }, [currentAppreciatedPrice, currentForm.percentDownPayment]);
   
     const addHome = () => {
         const newHome = new House(
@@ -210,6 +216,18 @@ export const HomeListBuilder = ({ onCalculate }) => {
                                 ${Math.round(currentAppreciatedPrice).toLocaleString()}{" "}{currentForm.monthOfPurchase > 0 
                                     ? ` after ${currentForm.monthOfPurchase} months of appreciation` 
                                     : 'base price'}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-span-2">
+                        <label className="text-sm font-medium">Total Out of Pocket</label>
+                        <div className="mt-1 flex h-10 w-full rounded-md border border-input bg-gray-100 px-3 py-2 text-sm ring-offset-background">
+                            <div className="font-medium text-s">
+                                ${Math.round(totalOutOfPocket).toLocaleString()}{" "}
+                                <span className="text-gray-600">
+                                    (includes {currentForm.percentDownPayment}% down payment and 7% closing costs)
+                                </span>
                             </div>
                         </div>
                     </div>
