@@ -19,17 +19,10 @@ export const runSimulation = (startingHomes, projectionsYears) => {
     return result;
   }
 
-  ///// REVISIT THESE ASSUMPTIONS IF WE ADD FURTHER FUNCTIONALITY
-  /// constant values:
-  const percentDown = startingHomes[0].percentDownPayment;
-  const percentAnnualHomeAppreciation = startingHomes[0].percentAnnualHomeAppreciation;
-  const percentAnnualInterestRate = startingHomes[0].percentAnnualInterestRate;
-  const loanTermYears = 30;
-
   const homes = []; // our list of all homes purchased either from user input or growth
 
   for (let month = 0; month <= projectionsYears * 12; month++) {
-    // add any input homes to simulation homes if it is the correct month
+    // add any input homes to simulation homes if it is the correct month to do so
     let newHomesAddedThisMonth = [];
     for (let home of startingHomes) {
       if (home.monthOfPurchase === month) {
@@ -39,7 +32,7 @@ export const runSimulation = (startingHomes, projectionsYears) => {
     startingHomes = startingHomes.filter((home) => home.monthOfPurchase !== month);
 
     //// check for possibility of buying a new home via a refinance
-    //// cost of buying a new home is: currentHomeValue * (downPaymentPercenct + 7%)
+    //// cost of buying a new home is: currentHomeValue * (downPayment% + 7%)
     if (homes.length !== 0) {
       for (let home of homes) {
         const fractionOfHomePriceToGetIn = (home.percentDownPayment + 7) / 100;
@@ -51,7 +44,7 @@ export const runSimulation = (startingHomes, projectionsYears) => {
               month,
               home.getCurrentHomeValue(month),
               home.percentAnnualHomeAppreciation,
-              home.percentDown,
+              home.percentDownPayment,
               home.percentAnnualInterestRate,
               home.loanTermYears,
               home.refinanceCost,
@@ -66,10 +59,6 @@ export const runSimulation = (startingHomes, projectionsYears) => {
 
   const projectionMonth = projectionsYears * 12;
 
-  console.log(`result home count: ${homes.length}`);
-  for (let i = 0; i < homes.length; i++) {
-    console.log(`potential payout: ${formatCurrency(homes[i].getPossibleRefinancePayout(projectionMonth))}`);
-  }
   return homes;
 };
 

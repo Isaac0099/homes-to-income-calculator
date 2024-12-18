@@ -59,7 +59,6 @@ class House {
       throw new Error("can't get possible refinance details for the month you do a refinance");
     }
     const monthsSinceMortgageOrRefinance = currentMonth - this.monthOfLatestMortgageOrRefinance;
-    console.log(`monthSinceRefi: ${monthsSinceMortgageOrRefinance}`);
     const currentHomeValue =
       this.initialHomePrice *
       Math.pow(1 + this.percentAnnualHomeAppreciation / 100, (currentMonth - this.monthOfPurchase) / 12);
@@ -76,7 +75,6 @@ class House {
     }
 
     const monthsSinceMortgageOrRefinance = currentMonth - this.monthOfLatestMortgageOrRefinance;
-    //console.log(monthsSinceMortgageOrRefinance);
 
     // Payout information
     const currentHomeValue =
