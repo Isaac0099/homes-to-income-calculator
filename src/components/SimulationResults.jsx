@@ -72,7 +72,7 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
             <TabsList>
               <TabsTrigger value="portfolio">Portfolio Growth</TabsTrigger>
               <TabsTrigger value="properties">Properties Count Over Time</TabsTrigger>
-              <TabsTrigger value="cashflow">Equity Over Time</TabsTrigger>
+              <TabsTrigger value="equity">Equity Over Time</TabsTrigger>
             </TabsList>
 
             <TabsContent value="portfolio" className="h-[400px]">
@@ -116,7 +116,7 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
               </ResponsiveContainer>
             </TabsContent>
 
-            <TabsContent value="cashflow" className="h-[400px]">
+            <TabsContent value="equity" className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={results.graphingData}>
                   <CartesianGrid strokeDasharray="3 3" />
