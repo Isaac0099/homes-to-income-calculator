@@ -18,8 +18,15 @@ export const runSimulation = (startingHomes, projectionsYears) => {
     const result = null;
     return result;
   }
+  const result = {};
 
   const homes = []; // our list of all homes purchased either from user input or growth
+
+  // Arrays with yearly value for making graphs and showing results.
+  const totalEquity = [];
+  const totalProperties = [];
+  const totalPortfolioValue = [];
+  const totalDebt = [];
 
   for (let month = 0; month <= projectionsYears * 12; month++) {
     // add any input homes to simulation homes if it is the correct month to do so
@@ -58,11 +65,38 @@ export const runSimulation = (startingHomes, projectionsYears) => {
       }
     }
     homes.push(...newHomesAddedThisMonth);
+
+    // for every year, add results to graphing arrays
+    if (month % 12 === 0) {
+      const propertyCountEntry = homes.length;
+      const portfolioValueEntry = 0;
+      const debtEntry = 0;
+      const equityEntry = 0;
+
+      for (let home of homes) {
+        const homeValue = home.getCurrentHomeValue(month);
+        const homeDebt = home.schedule[month - home.monthOfLatestMortgageOrRefinance];
+        portfolioValueEntry += homeValue;
+        debtEntry += homeDebt;
+        equityEntry += homeValue - homeDebt;
+      }
+
+      totalProperties.push(propertyCountEntry);
+      totalPortfolioValue.push(portfolioValueEntry);
+      totalDebt.push(debtEntry);
+      totalEquity.push(equityEntry);
+    }
   }
 
-  const projectionMonth = projectionsYears * 12;
+  result = {
+    homes: homes,
+    totalProperties: totalProperties,
+    totalPortfolioValue: totalPortfolioValue,
+    totalDebt: totalDebt,
+    toalEquity: totalEquity,
+  };
 
-  return homes;
+  return results;
 };
 
 export default runSimulation;
