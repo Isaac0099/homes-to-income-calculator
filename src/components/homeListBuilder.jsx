@@ -27,7 +27,7 @@ export const HomeListBuilder = ({ onCalculate }) => {
         
         setCurrentForm((prev) => ({
           ...prev,
-          [name]: value === "" ? 0 : parseFloat(rawValue),
+          [name]: value === "" ? "" : Math.abs(parseFloat(rawValue))
         }));
     };
 
@@ -60,7 +60,7 @@ export const HomeListBuilder = ({ onCalculate }) => {
             setError("Please enter a refinance cost between $0 and $15,000");
             return;
         }
-        if (!currentForm.monthOfPurchase || currentForm.monthOfPurchase < 0 || currentForm.monthOfPurchase > projectionYears * 12) {
+        if (currentForm.monthOfPurchase === "" || currentForm.monthOfPurchase < 0 || currentForm.monthOfPurchase > projectionYears * 12) {
             setError("Please enter a purchase month from 0 to the month the simulation ends");
             return;
         }

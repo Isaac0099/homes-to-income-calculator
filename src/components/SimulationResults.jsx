@@ -50,7 +50,7 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
             <KeyMetricCard
               icon={DollarSign}
               title="Total Portfolio Value"
-              value={`$${Math.round(results.graphingData[projectionYears].portfolioValue / 1000000)}M`}
+              value={`$${Math.round(results.graphingData[projectionYears*12].portfolioValue / 1000000)}M`}
               subtext={`Projected in ${projectionYears} years`}
             />
             <KeyMetricCard
@@ -79,11 +79,19 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={results.graphingData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
+                  <XAxis 
+                    dataKey="month"
+                    tickFormatter={(month) => Math.floor(month / 12)}
+                    interval={11} 
+                  />
                   <YAxis tickFormatter={(value) => `$${value/1000000}M`} />
                   <Tooltip 
-                    formatter={(value) => [`$${(value/1000000).toFixed(2)}M`]}
-                    labelFormatter={(label) => `Year ${label}`}
+                    formatter={(value) => [`$${(value/1000000).toFixed(3)}M`]}
+                    labelFormatter={(month) => {
+                      const year = Math.floor((month / 12));
+                      const monthInYear = month % 12;
+                      return `Year ${year}- Month ${monthInYear}`;
+                    }}
                   />
                   <Line 
                     type="monotone" 
@@ -100,17 +108,26 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={results.graphingData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
+                  <XAxis 
+                    dataKey="month" 
+                    tickFormatter={(month) => Math.floor(month / 12)}
+                    interval={11}
+                  />
                   <YAxis />
                   <Tooltip 
                     formatter={(value) => [value, "Properties"]}
-                    labelFormatter={(label) => `Year ${label}`}
+                    labelFormatter={(month) => {
+                      const year = Math.floor((month / 12));
+                      const monthInYear = month % 12;
+                      return `Year ${year}- Month ${monthInYear}`;
+                    }}
                   />
                   <Line 
                     type="stepAfter" 
                     dataKey="propertyCount" 
                     stroke="#16a34a" 
                     strokeWidth={2}
+                    dot={false}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -120,11 +137,19 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={results.graphingData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
+                  <XAxis 
+                    dataKey="month" 
+                    tickFormatter={(month) => Math.floor(month / 12)}
+                    interval={11}
+                  />
                   <YAxis tickFormatter={(value) => `$${value/1000}k`} />
                   <Tooltip 
-                    formatter={(value) => [`$${(value/1000).toFixed(1)}k`]}
-                    labelFormatter={(label) => `Year ${label}`}
+                    formatter={(value) => [`$${(value/1000000).toFixed(3)}M`]}
+                    labelFormatter={(month) => {
+                      const year = Math.floor((month / 12));
+                      const monthInYear = month % 12;
+                      return `Year ${year}- Month ${monthInYear}`;
+                    }}
                   />
                   <Line 
                     type="monotone" 

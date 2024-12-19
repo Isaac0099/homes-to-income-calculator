@@ -69,32 +69,34 @@ export const runSimulation = (startingHomes, projectionYears) => {
     homes.push(...newHomesAddedThisMonth);
 
     // for every year, add results to graphing array
-    if (month % 12 === 0) {
-      const propertyCountEntry = homes.length;
-      let portfolioValueEntry = 0;
-      let debtEntry = 0;
-      let equityEntry = 0;
+    //if (month % 12 === 0) {
+    const propertyCountEntry = homes.length;
+    let portfolioValueEntry = 0;
+    let debtEntry = 0;
+    let equityEntry = 0;
 
-      for (let home of homes) {
-        const homeValue = home.getCurrentHomeValue(month);
-        const homeDebt = home.schedule[month - home.monthOfLatestMortgageOrRefinance].remainingBalance;
-        portfolioValueEntry += homeValue;
-        debtEntry += homeDebt;
-        equityEntry += homeValue - homeDebt;
-      }
-
-      const dataPoint = {
-        year: month / 12,
-        propertyCount: propertyCountEntry,
-        portfolioValue: portfolioValueEntry,
-        debt: debtEntry,
-        equity: equityEntry,
-      };
-      graphingData.push(dataPoint);
+    for (let home of homes) {
+      const homeValue = home.getCurrentHomeValue(month);
+      const homeDebt = home.schedule[month - home.monthOfLatestMortgageOrRefinance].remainingBalance;
+      portfolioValueEntry += homeValue;
+      debtEntry += homeDebt;
+      equityEntry += homeValue - homeDebt;
     }
+
+    const dataPoint = {
+      month: month,
+      year: Math.floor(month / 12),
+      propertyCount: propertyCountEntry,
+      portfolioValue: portfolioValueEntry,
+      debt: debtEntry,
+      equity: equityEntry,
+    };
+    graphingData.push(dataPoint);
+    //}
   }
 
-  const annualPercentReturnFromEquity = (Math.pow(graphingData[projectionYears].equity / totalOutOfPocket, 1 / projectionYears) - 1) * 100;
+  const annualPercentReturnFromEquity =
+    (Math.pow(graphingData[projectionYears * 12].equity / totalOutOfPocket, 1 / projectionYears) - 1) * 100;
 
   const results = {
     homes: homes,
