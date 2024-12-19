@@ -27,7 +27,7 @@ export const HomeListBuilder = ({ onCalculate }) => {
         
         setCurrentForm((prev) => ({
           ...prev,
-          [name]: parseFloat(rawValue) || '',
+          [name]: value === "" ? 0 : parseFloat(rawValue),
         }));
     };
 
@@ -47,6 +47,23 @@ export const HomeListBuilder = ({ onCalculate }) => {
     }, [currentAppreciatedPrice, currentForm.percentDownPayment]);
   
     const addHome = () => {
+        setError("");
+        if (!currentForm.percentDownPayment || currentForm.percentDownPayment < 1 || currentForm.percentDownPayment > 100) {
+            setError("Please enter a down payment percent between 1 and 100");
+            return;
+        }
+        if (!currentForm.loanTermYears || (currentForm.loanTermYears !== 15 && currentForm.loanTermYears !== 20 && currentForm.loanTermYears !== 30)) {
+            setError("Please enter loan term that is either 15, 20, or 30 years");
+            return;
+        }
+        if (!currentForm.refinanceCost || currentForm.refinanceCost < 0 || currentForm.percentDownPayment > 15_000) {
+            setError("Please enter a refinance cost between $0 and $15,000");
+            return;
+        }
+        if (!currentForm.monthOfPurchase || currentForm.monthOfPurchase < 0 || currentForm.monthOfPurchase > projectionYears * 12) {
+            setError("Please enter a purchase month from 0 to the month the simulation ends");
+            return;
+        }
         const newHome = new House(
             currentForm.monthOfPurchase, 
             currentAppreciatedPrice,
@@ -206,6 +223,7 @@ export const HomeListBuilder = ({ onCalculate }) => {
                             value={currentForm.monthOfPurchase}
                             onChange={handleInputChange}
                             className="mt-1"
+                            min={0}
                         />
                     </div>
 
@@ -232,6 +250,8 @@ export const HomeListBuilder = ({ onCalculate }) => {
                         </div>
                     </div>
                 </div>
+
+                {error && <p className="text-red-500 text-sm">{error}</p>}
 
                 <div className="flex justify-end">
                     <Button onClick={addHome}>Add Home</Button>
