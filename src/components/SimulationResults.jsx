@@ -113,7 +113,9 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
                     tickFormatter={(month) => Math.floor(month / 12)}
                     interval={11}
                   />
-                  <YAxis />
+                  <YAxis 
+                    interval={1}
+                  />
                   <Tooltip 
                     formatter={(value) => [value, "Properties"]}
                     labelFormatter={(month) => {
