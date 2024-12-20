@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DollarSign, Home, TrendingUp, Wallet } from 'lucide-react';
-import { formatYAxisTick, formatTooltipValue } from '@/lib/utils';
+import { formatYAxisTick, formatTooltipValue, formatKeyMetricCardNumber } from '@/lib/utils';
 
 
 // Currrency formatter
@@ -38,35 +38,42 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
     <div className="w-full max-w-6xl mx-auto space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Portfolio Growth Projection</CardTitle>
+          <CardTitle className="text-2xl">Portfolio Growth Projection After {projectionYears} Years</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Key Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <KeyMetricCard
-              icon={Home}
-              title="Total Properties"
-              value={results.homes.length}
-              subtext={`Starting with ${homes.length} properties`}
-            />
-            <KeyMetricCard
-              icon={DollarSign}
-              title="Total Portfolio Value"
-              value={`$${(results.graphingData[projectionYears*12].portfolioValue / 1000000).toFixed(2)}M`}
-              subtext={`Projected in ${projectionYears} years`}
-            />
-            <KeyMetricCard
-              icon={TrendingUp}
-              title="Annual ROI"
-              value={`${results.annualPercentReturnFromEquity.toFixed(1)}%`}
-              subtext={`Average return on investment \n (based on equity after ${projectionYears} years)`}
-            />
-            <KeyMetricCard
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <KeyMetricCard
               icon={Wallet}
               title="Total Out of Pocket"
               value={formatCurrency(results.totalOutOfPocket)}
               subtext="Money you spent buying homes"
             />
+            <KeyMetricCard
+              icon={Home}
+              title="Total Property Count"
+              value={results.homes.length}
+              subtext={homes.length > 1 ? `Starting with ${homes.length} properties` : `Starting with 1 property`}
+            />
+            <KeyMetricCard
+              icon={DollarSign}
+              title="Total Portfolio Value"
+              value={`${formatKeyMetricCardNumber(results.graphingData[projectionYears*12].portfolioValue)}`}
+              subtext={`Projected in ${projectionYears} years`}
+            />
+            <KeyMetricCard
+              icon={DollarSign}
+              title="Total Equity"
+              value={`${formatKeyMetricCardNumber(results.graphingData[projectionYears*12].equity)}`}
+              subtext={`(Average based on equity value)`}
+            />
+            <KeyMetricCard
+              icon={TrendingUp}
+              title="Annual ROI"
+              value={`${results.annualPercentReturnFromEquity.toFixed(1)}%`}
+              subtext={`(Average based on equity value)`}
+            />
+            
           </div>
 
           {/* Tabs for different charts */}

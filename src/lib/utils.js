@@ -12,7 +12,7 @@ export const getMaxValue = (data, key) => {
   return Math.max(...data.map((item) => Math.abs(item[key])));
 };
 
-const formatNumber = (value) => {
+export const formatNumber = (value) => {
   const absValue = Math.abs(value);
   if (absValue >= 1000000) {
     return {
@@ -42,4 +42,12 @@ export const formatTooltipValue = (value, key) => {
     return [`$${formattedValue.toFixed(0)}${suffix}`];
   }
   return [`$${formattedValue.toFixed(3)}${suffix}`];
+};
+
+export const formatKeyMetricCardNumber = (value) => {
+  const { value: formattedValue, suffix } = formatNumber(value);
+  if (suffix === "k") {
+    return `$${formattedValue.toFixed(0)}${suffix}`;
+  }
+  return `$${formattedValue.toFixed(2)}${suffix}`;
 };
