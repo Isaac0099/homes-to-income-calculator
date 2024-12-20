@@ -3,6 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DollarSign, Home, TrendingUp, Wallet } from 'lucide-react';
+import { formatYAxisTick, formatTooltipValue } from '@/lib/utils';
+
 
 // Currrency formatter
 const formatCurrency = (amount) => {
@@ -50,7 +52,7 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
             <KeyMetricCard
               icon={DollarSign}
               title="Total Portfolio Value"
-              value={`$${Math.round(results.graphingData[projectionYears*12].portfolioValue / 1000000)}M`}
+              value={`$${(results.graphingData[projectionYears*12].portfolioValue / 1000000).toFixed(2)}M`}
               subtext={`Projected in ${projectionYears} years`}
             />
             <KeyMetricCard
@@ -84,9 +86,9 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
                     tickFormatter={(month) => Math.floor(month / 12)}
                     interval={11} 
                   />
-                  <YAxis tickFormatter={(value) => `$${value/1000000}M`} />
+                  <YAxis tickFormatter={(value) => formatYAxisTick(value)} />
                   <Tooltip 
-                    formatter={(value) => [`$${(value/1000000).toFixed(3)}M`]}
+                    formatter={(value) => formatTooltipValue(value)}
                     labelFormatter={(month) => {
                       const year = Math.floor((month / 12));
                       const monthInYear = month % 12;
@@ -144,9 +146,9 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
                     tickFormatter={(month) => Math.floor(month / 12)}
                     interval={11}
                   />
-                  <YAxis tickFormatter={(value) => `$${value/1000}k`} />
+                  <YAxis tickFormatter={(value) => formatYAxisTick(value)}/>
                   <Tooltip 
-                    formatter={(value) => [`$${(value/1000000).toFixed(3)}M`]}
+                    formatter={(value) => formatTooltipValue(value)}
                     labelFormatter={(month) => {
                       const year = Math.floor((month / 12));
                       const monthInYear = month % 12;
