@@ -47,7 +47,7 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
               icon={Wallet}
               title="Total Out of Pocket"
               value={formatCurrency(results.totalOutOfPocket)}
-              subtext="Money you spent buying homes"
+              subtext="Money you spent"
             />
             <KeyMetricCard
               icon={Home}
@@ -65,7 +65,7 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
               icon={DollarSign}
               title="Total Equity"
               value={`${formatKeyMetricCardNumber(results.graphingData[projectionYears*12].equity)}`}
-              subtext={`(Average based on equity value)`}
+              subtext={`Projected in ${projectionYears} years`}
             />
             <KeyMetricCard
               icon={TrendingUp}
