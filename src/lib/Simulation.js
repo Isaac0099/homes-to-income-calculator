@@ -43,33 +43,28 @@ export const runSimulation = (startingHomes, projectionYears) => {
     //// check for possibility of buying a new home via a refinance
     //// cost of buying a new home is: currentHomeValue * (downPayment% + 7%)
     if (homes.length !== 0) {
-      if (projectionYears * 12 - month > 24) {
-        // we stop doing refinances for the last two years of the growth period to build equity.
-        for (let home of homes) {
-          const fractionOfHomePriceToGetIn = (home.percentDownPayment + 7) / 100;
-          const costToGetIntoNewHome = home.getCurrentHomeValue(month) * fractionOfHomePriceToGetIn;
-          if (home.getPossibleRefinancePayout(month) > costToGetIntoNewHome) {
-            home.doARefinance(month, home.percentAnnualInterestRate, 25, home.loanTermYears);
-            newHomesAddedThisMonth.push(
-              new House(
-                month,
-                home.getCurrentHomeValue(month),
-                home.percentAnnualHomeAppreciation,
-                home.percentDownPayment,
-                home.percentAnnualInterestRate,
-                home.loanTermYears,
-                home.refinanceCost,
-                Date.now()
-              )
-            );
-          }
+      for (let home of homes) {
+        const fractionOfHomePriceToGetIn = (home.percentDownPayment + 7) / 100;
+        const costToGetIntoNewHome = home.getCurrentHomeValue(month) * fractionOfHomePriceToGetIn;
+        if (home.getPossibleRefinancePayout(month) > costToGetIntoNewHome) {
+          home.doARefinance(month, home.percentAnnualInterestRate, 25, home.loanTermYears);
+          newHomesAddedThisMonth.push(
+            new House(
+              month,
+              home.getCurrentHomeValue(month),
+              home.percentAnnualHomeAppreciation,
+              home.percentDownPayment,
+              home.percentAnnualInterestRate,
+              home.loanTermYears,
+              home.refinanceCost,
+              Date.now()
+            )
+          );
         }
       }
     }
     homes.push(...newHomesAddedThisMonth);
 
-    // for every year, add results to graphing array
-    //if (month % 12 === 0) {
     const propertyCountEntry = homes.length;
     let portfolioValueEntry = 0;
     let debtEntry = 0;
@@ -92,7 +87,6 @@ export const runSimulation = (startingHomes, projectionYears) => {
       equity: equityEntry,
     };
     graphingData.push(dataPoint);
-    //}
   }
 
   const annualPercentReturnFromEquity =

@@ -42,7 +42,7 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
         </CardHeader>
         <CardContent>
           {/* Key Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-4 mb-6">
           <KeyMetricCard
               icon={Wallet}
               title="Total Out of Pocket"
@@ -72,6 +72,12 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
               title="Annual ROI"
               value={`${results.annualPercentReturnFromEquity.toFixed(1)}%`}
               subtext={`(Average based on equity value)`}
+            />
+            <KeyMetricCard
+              icon={TrendingUp}
+              title="Sustainable Monthly Withdrawl"
+              value={`${formatCurrency((results.graphingData[projectionYears*12].portfolioValue * 0.05 * 0.75 - 7000) / 12)}`}
+              subtext={`(formula = (annualAppreciation * 75% - $7,000) / 12`}
             />
             
           </div>
