@@ -76,8 +76,8 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
             <KeyMetricCard
               icon={TrendingUp}
               title="Sustainable Monthly Withdrawl"
-              value={`${formatCurrency((results.graphingData[projectionYears*12].portfolioValue * 0.05 * 0.75 - 7000) / 12)}`}
-              subtext={`(formula = (annualAppreciation * 75% - $7,000) / 12`}
+              value={`${formatCurrency((results.graphingData[projectionYears*12].portfolioValue * results.homes[0].percentAnnualHomeAppreciation/100 * 0.75 - 7000) / 12)}`}
+              subtext={`formula = (PortfolioValue * ${results.homes[0].percentAnnualHomeAppreciation}% * 75% - $7,000) / 12`}
             />
             
           </div>
