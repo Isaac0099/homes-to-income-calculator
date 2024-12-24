@@ -71,13 +71,13 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
               icon={TrendingUp}
               title="Annual ROI"
               value={`${results.annualPercentReturnFromEquity.toFixed(1)}%`}
-              subtext={`(Average based on equity value)`}
+              subtext={`Average based on equity value (does not include positive cash flow or tax savings)`}
             />
             <KeyMetricCard
               icon={TrendingUp}
-              title="Sustainable Monthly Withdrawl"
-              value={`${formatCurrency((results.graphingData[projectionYears*12].portfolioValue * results.homes[0].percentAnnualHomeAppreciation/100 * 0.75 - 7000) / 12)}`}
-              subtext={`formula = (PortfolioValue * ${results.homes[0].percentAnnualHomeAppreciation}% * 75% - $7,000) / 12`}
+              title="Tax-Free Monthly Equity Income Available"
+              value={`${formatCurrency((results.graphingData[projectionYears*12].portfolioValue * results.homes[0].percentAnnualHomeAppreciation/100 * 0.75 - results.homes[0].getCurrentRefiCost(projectionYears*12)) / 12)}`}
+              subtext={`Formula = (Portfolio Value * ${results.homes[0].percentAnnualHomeAppreciation}% * 75% - Refinance Cost) / 12`}
             />
             
           </div>
@@ -86,8 +86,9 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
           <Tabs defaultValue="portfolio" className="w-full">
             <TabsList>
               <TabsTrigger value="portfolio">Portfolio Growth</TabsTrigger>
-              <TabsTrigger value="properties">Properties Count Over Time</TabsTrigger>
               <TabsTrigger value="equity">Equity Over Time</TabsTrigger>
+              <TabsTrigger value="equityIncome">Potential Equity Income</TabsTrigger>
+              <TabsTrigger value="properties">Property Count</TabsTrigger>
             </TabsList>
 
             <TabsContent value="portfolio" className="h-[400px]">
@@ -112,6 +113,64 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
                     type="monotone" 
                     dataKey="portfolioValue" 
                     stroke="#2563eb" 
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </TabsContent>
+
+            <TabsContent value="equity" className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={results.graphingData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="month" 
+                    tickFormatter={(month) => Math.floor(month / 12)}
+                    interval={11}
+                  />
+                  <YAxis tickFormatter={(value) => formatYAxisTick(value)}/>
+                  <Tooltip 
+                    formatter={(value) => formatTooltipValue(value)}
+                    labelFormatter={(month) => {
+                      const year = Math.floor((month / 12));
+                      const monthInYear = month % 12;
+                      return `Year ${year}- Month ${monthInYear}`;
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="equity" 
+                    stroke="#dc2626" 
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </TabsContent>
+
+            <TabsContent value="equityIncome" className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={results.graphingData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="month" 
+                    tickFormatter={(month) => Math.floor(month / 12)}
+                    interval={11}
+                  />
+                  <YAxis tickFormatter={(value) => formatYAxisTick(value)}/>
+                  <Tooltip 
+                    formatter={(value) => formatTooltipValue(value)}
+                    labelFormatter={(month) => {
+                      const year = Math.floor((month / 12));
+                      const monthInYear = month % 12;
+                      return `Year ${year}- Month ${monthInYear}`;
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="equityIncome" 
+                    stroke="#dc2626" 
                     strokeWidth={2}
                     dot={false}
                   />
@@ -150,34 +209,7 @@ export const SimulationResults = ({ homes, projectionYears, results, onReset }) 
               </ResponsiveContainer>
             </TabsContent>
 
-            <TabsContent value="equity" className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={results.graphingData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="month" 
-                    tickFormatter={(month) => Math.floor(month / 12)}
-                    interval={11}
-                  />
-                  <YAxis tickFormatter={(value) => formatYAxisTick(value)}/>
-                  <Tooltip 
-                    formatter={(value) => formatTooltipValue(value)}
-                    labelFormatter={(month) => {
-                      const year = Math.floor((month / 12));
-                      const monthInYear = month % 12;
-                      return `Year ${year}- Month ${monthInYear}`;
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="equity" 
-                    stroke="#dc2626" 
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </TabsContent>
+            
           </Tabs>
         </CardContent>
       </Card>

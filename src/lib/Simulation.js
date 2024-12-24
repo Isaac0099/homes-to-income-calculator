@@ -46,7 +46,7 @@ export const runSimulation = (startingHomes, projectionYears) => {
       for (let home of homes) {
         const fractionOfHomePriceToGetIn = (home.percentDownPayment + 7) / 100;
         const costToGetIntoNewHome = home.getCurrentHomeValue(month) * fractionOfHomePriceToGetIn;
-        if (home.getPossibleRefinancePayout(month) > costToGetIntoNewHome) {
+        if (home.willReinvest && home.getPossibleRefinancePayout(month) > costToGetIntoNewHome) {
           home.doARefinance(month, home.percentAnnualInterestRate, 25, home.loanTermYears);
           newHomesAddedThisMonth.push(
             new House(
@@ -56,7 +56,7 @@ export const runSimulation = (startingHomes, projectionYears) => {
               home.percentDownPayment,
               home.percentAnnualInterestRate,
               home.loanTermYears,
-              home.refinanceCost,
+              home.willReinvest,
               Date.now()
             )
           );
@@ -72,7 +72,11 @@ export const runSimulation = (startingHomes, projectionYears) => {
 
     for (let home of homes) {
       const homeValue = home.getCurrentHomeValue(month);
-      const homeDebt = home.schedule[month - home.monthOfLatestMortgageOrRefinance].remainingBalance;
+      const homeDebt = 0;
+      if (home.willReinvest || month - home.monthOfLatestMortgageOrRefinance < home.schedule.length) {
+        // this method of checking debt only works if the home is refinancing before the ammortization schedule ends
+        const homeDebt = home.schedule[month - home.monthOfLatestMortgageOrRefinance].remainingBalance;
+      }
       portfolioValueEntry += homeValue;
       debtEntry += homeDebt;
       equityEntry += homeValue - homeDebt;
@@ -85,6 +89,8 @@ export const runSimulation = (startingHomes, projectionYears) => {
       portfolioValue: portfolioValueEntry,
       debt: debtEntry,
       equity: equityEntry,
+      equityIncome:
+        (((portfolioValueEntry * homes[0].percentAnnualHomeAppreciation) / 100) * 0.75 - homes[0].getCurrentRefiCost(month)) / 12,
     };
     graphingData.push(dataPoint);
   }

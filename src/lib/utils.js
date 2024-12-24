@@ -19,7 +19,7 @@ export const formatNumber = (value) => {
       value: value / 1000000,
       suffix: "M",
     };
-  } else if (absValue >= 1000) {
+  } else if (absValue >= 10_000) {
     return {
       value: value / 1000,
       suffix: "k",
@@ -40,8 +40,11 @@ export const formatTooltipValue = (value, key) => {
   const { value: formattedValue, suffix } = formatNumber(value);
   if (suffix === "k") {
     return [`$${formattedValue.toFixed(0)}${suffix}`];
+  } else if (suffix === "M") {
+    return [`$${formattedValue.toFixed(3)}${suffix}`];
+  } else {
+    return [`$${formattedValue.toFixed(2)}${suffix}`];
   }
-  return [`$${formattedValue.toFixed(3)}${suffix}`];
 };
 
 export const formatKeyMetricCardNumber = (value) => {
