@@ -72,10 +72,10 @@ export const runSimulation = (startingHomes, projectionYears) => {
 
     for (let home of homes) {
       const homeValue = home.getCurrentHomeValue(month);
-      const homeDebt = 0;
-      if (home.willReinvest || month - home.monthOfLatestMortgageOrRefinance < home.schedule.length) {
+      let homeDebt = 0;
+      if (month - home.monthOfLatestMortgageOrRefinance < home.schedule.length) {
         // this method of checking debt only works if the home is refinancing before the ammortization schedule ends
-        const homeDebt = home.schedule[month - home.monthOfLatestMortgageOrRefinance].remainingBalance;
+        homeDebt = home.schedule[month - home.monthOfLatestMortgageOrRefinance].remainingBalance;
       }
       portfolioValueEntry += homeValue;
       debtEntry += homeDebt;
@@ -90,7 +90,9 @@ export const runSimulation = (startingHomes, projectionYears) => {
       debt: debtEntry,
       equity: equityEntry,
       equityIncome:
-        (((portfolioValueEntry * homes[0].percentAnnualHomeAppreciation) / 100) * 0.75 - homes[0].getCurrentRefiCost(month)) / 12,
+        (((equityEntry === 0 ? 0 : portfolioValueEntry * homes[0].percentAnnualHomeAppreciation) / 100) * 0.75 -
+          homes[0].getCurrentRefiCost(month)) /
+        12,
     };
     graphingData.push(dataPoint);
   }
